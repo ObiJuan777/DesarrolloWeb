@@ -18,26 +18,31 @@ import util.MySQLConexion;
  */
 public class PedidoDAO {
 
-    public List<Pedido> listado() {
-        Connection cn = MySQLConexion.getConexion();
-        String sql = "select * from pedido";
-        List<Pedido> lista = new ArrayList();
-        try {
-            PreparedStatement st = cn.prepareStatement(sql);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                Pedido p = new Pedido();
-                p.setN_pedido(rs.getInt(1));
-                p.setCost_acum(rs.getDouble(2));
-                p.setCant(rs.getInt(3));
-                p.setCliente(rs.getString(4));
-                p.setBebida(rs.getString(5));
-                lista.add(p);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return lista;
+    public List<Pedido> listado(String dni){
+        
+     Connection cn=MySQLConexion.getConexion();
+     String sql="select p.n_pedido,b.descrip,b.nom,p.cant,p.cost_acum,b.foto "
+             + "from bebida b inner join pedido p ON (b.cod=p.bebida)"
+             + " where cliente=?";
+     List<Pedido> lista=new ArrayList();
+     try{
+        PreparedStatement st=cn.prepareStatement(sql);
+         st.setString(1, dni);
+         ResultSet rs=st.executeQuery();
+         while(rs.next()){
+             Pedido p=new Pedido();
+             p.setId(rs.getInt(1));
+             p.setDescrip(rs.getString(2));
+             p.setNom(rs.getString(3));
+             p.setCant(rs.getInt(4));
+             p.setCost_acum(rs.getDouble(5));
+             p.setFoto(rs.getString(6));
+             lista.add(p);
+         }
+     }catch(Exception ex){
+         ex.printStackTrace();
+     }
+         return lista;
     }
 
     public void adicion(Pedido p) {
